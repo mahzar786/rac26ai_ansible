@@ -1,0 +1,49 @@
+---
+domain_name: "lab.maz"
+
+node1_host: "mzr1"
+node1_fqdn: "mzr1.lab.maz"
+node1_public_ip: "192.168.56.60"
+node1_private_ip: "192.168.57.60"
+node1_vip: "mzr1-vip"
+node1_vip_fqdn: "mzr1-vip.lab.maz"
+node1_vip_ip: "192.168.56.62"
+
+node2_host: "mzr2"
+node2_fqdn: "mzr2.lab.maz"
+node2_public_ip: "192.168.56.61"
+node2_private_ip: "192.168.57.61"
+node2_vip: "mzr2-vip"
+node2_vip_fqdn: "mzr2-vip.lab.maz"
+node2_vip_ip: "192.168.56.63"
+
+scan_name: "mzr-scan"
+scan_fqdn: "mzr-scan.lab.maz"
+scan_ip1: "192.168.56.64"
+scan_ip2: "192.168.56.65"
+scan_ip3: "192.168.56.66"
+
+public_interface: "enp0s3"
+private_interface: "enp0s8"
+public_network: "192.168.56.0"
+private_network: "192.168.57.0"
+
+grid_base: "/u01/app/grid"
+grid_home: "/u01/app/26ai/grid"
+oracle_base: "/u01/app/oracle"
+db_home: "/u01/app/oracle/product/26ai/dbhome_1"
+ora_inventory: "/u01/app/oraInventory"
+stage_dir: "/stage"
+
+grid_zip: "LINUX.X64_2326100_grid_home.zip"
+db_zip: "LINUX.X64_2326100_db_home.zip"
+
+ocr_disk: "/dev/disk/by-id/ata-VBOX_HARDDISK_VB53696b04-02299818"
+data_disk: "/dev/disk/by-id/ata-VBOX_HARDDISK_VBc638bb07-b5cd2cd8"
+fra_disk: "/dev/disk/by-id/ata-VBOX_HARDDISK_VB26c4115d-f19154d9"
+
+cluster_name: "mzr-cluster"
+db_name: "TESTCDB"
+pdb_name: "TESTPDB"
+sys_password: "mzrAttack123"
+system_password: "mzrAttack123"

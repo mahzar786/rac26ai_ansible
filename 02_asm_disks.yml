@@ -1,0 +1,5 @@
+- name: 02_asm_disks
+  hosts: rac_nodes
+  become: true
+  roles:
+    - 02_asm_disks

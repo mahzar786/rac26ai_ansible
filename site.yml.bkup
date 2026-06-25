@@ -1,0 +1,7 @@
+- import_playbook: 00_common.yml
+- import_playbook: 01_network.yml
+- import_playbook: 02_asm_disks.yml
+- import_playbook: 03_grid_install.yml
+- import_playbook: 04_db_install.yml
+- import_playbook: 05_dbca.yml
+- import_playbook: 06_validate.yml

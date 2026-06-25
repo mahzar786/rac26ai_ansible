@@ -1,0 +1,5 @@
+- name: 04_dbca
+  hosts: rac_nodes
+  become: true
+  roles:
+    - 04_dbca

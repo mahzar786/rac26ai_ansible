@@ -1,0 +1,20 @@
+flowchart TB
+  C[Clients] --> SCAN[SCAN rac-scan.lab.mzr<br/>192.168.56.84/85/86]
+  SCAN --> L1[Listener on rac1-vip<br/>192.168.56.82]
+  SCAN --> L2[Listener on rac2-vip<br/>192.168.56.83]
+  subgraph N1[rac1.lab.mzr / 192.168.56.80 / 10.10.10.80]
+    L1 --> I1[RACDB1]
+    G1[Oracle 26ai Grid Home]
+    D1[Oracle 26ai DB Home]
+  end
+  subgraph N2[rac2.lab.mzr / 192.168.56.81 / 10.10.10.81]
+    L2 --> I2[RACDB2]
+    G2[Oracle 26ai Grid Home]
+    D2[Oracle 26ai DB Home]
+  end
+  I1 <--> I2
+  I1 --> ASM[Shared ASM]
+  I2 --> ASM
+  ASM --> OCR[+OCR]
+  ASM --> DATA[+DATA]
+  ASM --> FRA[+FRA]

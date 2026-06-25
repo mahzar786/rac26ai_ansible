@@ -1,0 +1,78 @@
+#!/bin/bash
+set -e
+
+BASE="/u01/ansible/rac26ai_ansible"
+TS=$(date +%F_%H%M%S)
+
+cd "$BASE"
+
+mkdir -p backup/replace_$TS
+
+echo "Backup current project..."
+tar czf backup/replace_$TS/rac26ai_ansible_before_replace_$TS.tar.gz .
+
+echo "Replacing old values everywhere..."
+
+grep -RIl \
+  -e 'rac1.lab.mzr' \
+  -e 'rac2.lab.mzr' \
+  -e 'rac1' \
+  -e 'rac2' \
+  -e '192.168.56.80' \
+  -e '192.168.56.81' \
+  -e '192.168.57.80' \
+  -e '192.168.57.81' \
+  -e 'lab.mzr' \
+  . \
+  --exclude-dir=.git \
+  --exclude-dir=backup \
+| while read f; do
+    cp "$f" "backup/replace_$TS/$(echo "$f" | sed 's#^\./##; s#/#_#g').bak"
+
+    sed -i \
+      -e 's/rac1\.lab\.mzr/mzr1.lab.maz/g' \
+      -e 's/rac2\.lab\.mzr/mzr2.lab.maz/g' \
+      -e 's/rac1-priv\.lab\.mzr/mzr1-priv.lab.maz/g' \
+      -e 's/rac2-priv\.lab\.mzr/mzr2-priv.lab.maz/g' \
+      -e 's/rac1-vip\.lab\.mzr/mzr1-vip.lab.maz/g' \
+      -e 's/rac2-vip\.lab\.mzr/mzr2-vip.lab.maz/g' \
+      -e 's/rac-scan\.lab\.mzr/mzr-scan.lab.maz/g' \
+      -e 's/lab\.mzr/lab.maz/g' \
+      -e 's/192\.168\.56\.80/192.168.56.60/g' \
+      -e 's/192\.168\.56\.81/192.168.56.61/g' \
+      -e 's/192\.168\.57\.80/192.168.57.60/g' \
+      -e 's/192\.168\.57\.81/192.168.57.61/g' \
+      -e 's/\brac1\b/mzr1/g' \
+      -e 's/\brac2\b/mzr2/g' \
+      -e 's/\brac-scan\b/mzr-scan/g' \
+      "$f"
+  done
+
+cat > inventory/hosts.ini <<'EOT'
+[rac_nodes]
+mzr1 ansible_host=192.168.56.60
+mzr2 ansible_host=192.168.56.61
+
+[rac_nodes:vars]
+ansible_user=root
+ansible_connection=ssh
+ansible_python_interpreter=/usr/bin/python3.9
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+EOT
+
+echo "Checking remaining old values..."
+grep -RIn \
+  -e 'rac1.lab.mzr' \
+  -e 'rac2.lab.mzr' \
+  -e '192.168.56.80' \
+  -e '192.168.56.81' \
+  -e 'lab.mzr' \
+  . \
+  --exclude-dir=backup || true
+
+echo
+echo "Testing Ansible..."
+ansible all -i inventory/hosts.ini -m ping
+
+echo
+echo "DONE. Backup saved under: backup/replace_$TS"

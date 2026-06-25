@@ -1,0 +1,60 @@
+---
+- name: Create Oracle groups
+  group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid }}"
+    state: present
+  loop:
+    - { name: oinstall, gid: 54321 }
+    - { name: dba, gid: 54322 }
+    - { name: oper, gid: 54323 }
+    - { name: backupdba, gid: 54324 }
+    - { name: dgdba, gid: 54325 }
+    - { name: kmdba, gid: 54326 }
+    - { name: asmadmin, gid: 54327 }
+    - { name: asmdba, gid: 54328 }
+    - { name: asmoper, gid: 54329 }
+    - { name: racdba, gid: 54330 }
+
+- name: Create grid user
+  user:
+    name: grid
+    uid: 54331
+    group: oinstall
+    groups: asmadmin,asmdba,asmoper,dba,racdba
+    append: yes
+
+- name: Create oracle user
+  user:
+    name: oracle
+    uid: 54321
+    group: oinstall
+    groups: dba,oper,backupdba,dgdba,kmdba,racdba,asmdba
+    append: yes
+
+- name: Create Oracle directories
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: oinstall
+    mode: "0775"
+    state: directory
+  loop:
+    - { path: "{{ grid_base }}", owner: grid }
+    - { path: "{{ grid_home }}", owner: grid }
+    - { path: "{{ oracle_base }}", owner: oracle }
+    - { path: "{{ db_home }}", owner: oracle }
+    - { path: "{{ ora_inventory }}", owner: grid }
+    - { path: "{{ stage_dir }}", owner: root }
+
+- name: Disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Set SELinux permissive runtime
+  command: setenforce 0
+  ignore_errors: yes
+  changed_when: false

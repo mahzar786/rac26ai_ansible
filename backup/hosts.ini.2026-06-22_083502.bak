@@ -1,0 +1,11 @@
+[rac_nodes]
+rac1.lab.mzr ansible_host=192.168.56.80 node_number=1 public_ip=192.168.56.80 private_ip=192.168.57.80 vip_ip=192.168.56.82
+rac2.lab.mzr ansible_host=192.168.56.81 node_number=2 public_ip=192.168.56.81 private_ip=192.168.57.81 vip_ip=192.168.56.83
+
+[rac_primary]
+rac1.lab.mzr
+
+[rac_nodes:vars]
+ansible_user=root
+ansible_python_interpreter=/usr/bin/python3.9
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

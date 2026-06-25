@@ -1,0 +1,86 @@
+cluster_name: mzrrac
+scan_name: rac-scan.lab.mzr
+scan_ips:
+  - 192.168.56.84
+  - 192.168.56.85
+  - 192.168.56.86
+
+domain_name: lab.mzr
+
+oracle_base: /u01/app/oracle
+grid_base: /u01/app/grid
+grid_home: /u01/app/26ai/grid
+db_home: /u01/app/oracle/product/26ai/dbhome_1
+ora_inventory: /u01/app/oraInventory
+
+stage_dir: /stage
+grid_zip: LINUX.X64_2326100_grid_home.zip
+db_zip: LINUX.X64_2326100_db_home.zip
+
+public_interface: enp0s3
+private_interface: enp0s9
+
+public_network: 192.168.56.0
+private_network: 192.168.57.0
+
+asm_sys_password: ChangeMe_26ai_ASM
+sys_password: racattack
+system_password: racattack
+
+db_name: TESTCDB
+pdb_name: TESTPDB
+
+asm_diskstring: /dev/disk/by-id/*
+ocr_disk: /dev/disk/by-id/ata-VBOX_HARDDISK_VB257fe329-bac46c41
+data_disk: /dev/disk/by-id/ata-VBOX_HARDDISK_VB6320f92e-9896e99f
+fra_disk: /dev/disk/by-id/ata-VBOX_HARDDISK_VB956885ed-81b8d617
+
+asm_disks:
+  - name: OCR01
+    path: /dev/disk/by-id/ata-VBOX_HARDDISK_VB257fe329-bac46c41
+    group: OCR
+  - name: DATA01
+    path: /dev/disk/by-id/ata-VBOX_HARDDISK_VB6320f92e-9896e99f
+    group: DATA
+  - name: FRA01
+    path: /dev/disk/by-id/ata-VBOX_HARDDISK_VB956885ed-81b8d617
+    group: FRA
+
+oracle_groups:
+  - oinstall
+  - dba
+  - oper
+  - backupdba
+  - dgdba
+  - kmdba
+  - racdba
+  - asmadmin
+  - asmdba
+  - asmoper
+
+packages_common:
+  - bc
+  - binutils
+  - compat-openssl11
+  - elfutils-libelf
+  - fontconfig
+  - gcc
+  - gcc-c++
+  - glibc
+  - glibc-devel
+  - ksh
+  - libaio
+  - libaio-devel
+  - libX11
+  - libXau
+  - libXi
+  - libXtst
+  - libnsl
+  - make
+  - net-tools
+  - nfs-utils
+  - smartmontools
+  - sysstat
+  - unzip
+  - xorg-x11-utils
+  - xorg-x11-xauth

@@ -1,0 +1,76 @@
+---
+- name: Unzip Grid home
+  unarchive:
+    src: "{{ stage_dir }}/{{ grid_zip }}"
+    dest: "{{ grid_home }}"
+    remote_src: true
+    owner: grid
+    group: oinstall
+    creates: "{{ grid_home }}/gridSetup.sh"
+  when: inventory_hostname in groups["rac_primary"]
+
+- name: Create Grid response file on primary
+  template:
+    src: gridsetup.rsp.j2
+    dest: "{{ stage_dir }}/gridsetup.rsp"
+    owner: grid
+    group: oinstall
+    mode: "0600"
+  when: inventory_hostname in groups['rac_primary']
+
+- name: Run Grid setup on primary
+  become: yes
+  become_user: grid
+  shell: "cd {{ grid_home }} && ./gridSetup.sh -silent -responseFile {{ stage_dir }}/gridsetup.rsp -ignorePrereqFailure"
+  register: grid_setup
+  when: inventory_hostname in groups['rac_primary']
+  changed_when: true
+  failed_when: grid_setup.rc != 0
+
+- name: Mark Grid setup success
+  set_fact:
+    grid_setup_success: true
+  when:
+    - inventory_hostname in groups['rac_primary']
+    - grid_setup is defined
+    - grid_setup.rc == 0
+
+- name: Check primary Grid setup success
+  set_fact:
+    primary_grid_setup_success: "{{ hostvars[groups['rac_primary'][0]].grid_setup_success | default(false) }}"
+
+- name: Stop if Grid setup failed
+  fail:
+    msg: "Grid setup failed on primary. Root scripts will not run."
+  when: not primary_grid_setup_success
+
+- name: Check oraInventory root script
+  stat:
+    path: "{{ ora_inventory }}/orainstRoot.sh"
+  register: orainst_script
+
+- name: Run oraInventory root script
+  shell: "{{ ora_inventory }}/orainstRoot.sh"
+  when: orainst_script.stat.exists
+  changed_when: true
+
+- name: Check Grid root.sh
+  stat:
+    path: "{{ grid_home }}/root.sh"
+  register: grid_root_script
+
+- name: Run Grid root.sh
+  shell: "{{ grid_home }}/root.sh"
+  when: grid_root_script.stat.exists
+  register: rootsh
+  failed_when: rootsh.rc not in [0,1]
+  changed_when: true
+
+- name: Run Grid config tools on primary
+  become: yes
+  become_user: grid
+  shell: "cd {{ grid_home }} && ./gridSetup.sh -executeConfigTools -responseFile {{ stage_dir }}/gridsetup.rsp -silent"
+  when: inventory_hostname in groups['rac_primary']
+  register: grid_config_tools
+  failed_when: grid_config_tools.rc not in [0,6]
+  changed_when: true

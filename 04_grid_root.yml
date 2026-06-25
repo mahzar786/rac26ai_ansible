@@ -1,0 +1,7 @@
+---
+- name: Grid Root Scripts
+  hosts: rac_nodes
+  become: yes
+
+  roles:
+    - role: 04_grid_root

@@ -1,0 +1,5 @@
+- name: 00_common
+  hosts: rac_nodes
+  become: true
+  roles:
+    - 00_common

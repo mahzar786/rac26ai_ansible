@@ -1,0 +1,49 @@
+---
+- name: Validate ASM disk variables
+  assert:
+    that:
+      - ocr_disk is defined
+      - data_disk is defined
+      - fra_disk is defined
+
+- name: Validate ASM candidate disks exist
+  stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ ocr_disk }}"
+    - "{{ data_disk }}"
+    - "{{ fra_disk }}"
+  register: asm_disk_stat
+
+- name: Fail if ASM disk missing
+  fail:
+    msg: "ASM disk missing: {{ item.item }}"
+  loop: "{{ asm_disk_stat.results }}"
+  when: not item.stat.exists
+
+- name: Check ASM disks signatures
+  command: "wipefs -n {{ item }}"
+  loop:
+    - "{{ ocr_disk }}"
+    - "{{ data_disk }}"
+    - "{{ fra_disk }}"
+  changed_when: false
+
+- name: Set permissions on ASM candidate disks
+  file:
+    path: "{{ item }}"
+    owner: grid
+    group: asmadmin
+    mode: "0660"
+  loop:
+    - "{{ ocr_disk }}"
+    - "{{ data_disk }}"
+    - "{{ fra_disk }}"
+
+- name: Show ASM disk mapping
+  shell: "hostname; ls -l {{ ocr_disk }} {{ data_disk }} {{ fra_disk }}; lsblk -o NAME,SIZE,MODEL,SERIAL"
+  register: asm_map
+  changed_when: false
+
+- debug:
+    var: asm_map.stdout_lines

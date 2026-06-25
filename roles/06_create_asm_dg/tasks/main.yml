@@ -1,0 +1,61 @@
+---
+- name: Check existing ASM disk groups
+  become: yes
+  become_user: grid
+  shell: |
+    export ORACLE_HOME={{ grid_home }}
+    export PATH=$ORACLE_HOME/bin:$PATH
+    asmcmd lsdg || true
+  register: existing_dg
+  changed_when: false
+  tags:
+    - asm_dg
+
+- name: Create DATA diskgroup
+  become: yes
+  become_user: grid
+  shell: |
+    export ORACLE_HOME={{ grid_home }}
+    export PATH=$ORACLE_HOME/bin:$PATH
+    sqlplus -s / as sysasm <<SQL
+    CREATE DISKGROUP DATA EXTERNAL REDUNDANCY
+    DISK '{{ data_disk }}'
+    ATTRIBUTE 'compatible.asm'='26.0','compatible.rdbms'='26.0';
+    exit;
+    SQL
+  when: existing_dg.stdout is not search('DATA')
+  tags:
+    - asm_dg
+
+- name: Create FRA diskgroup
+  become: yes
+  become_user: grid
+  shell: |
+    export ORACLE_HOME={{ grid_home }}
+    export PATH=$ORACLE_HOME/bin:$PATH
+    sqlplus -s / as sysasm <<SQL
+    CREATE DISKGROUP FRA EXTERNAL REDUNDANCY
+    DISK '{{ fra_disk }}'
+    ATTRIBUTE 'compatible.asm'='26.0','compatible.rdbms'='26.0';
+    exit;
+    SQL
+  when: existing_dg.stdout is not search('FRA')
+  tags:
+    - asm_dg
+
+- name: Validate ASM disk groups
+  become: yes
+  become_user: grid
+  shell: |
+    export ORACLE_HOME={{ grid_home }}
+    export PATH=$ORACLE_HOME/bin:$PATH
+    asmcmd lsdg
+  register: asm_dg_status
+  changed_when: false
+  tags:
+    - asm_dg
+
+- debug:
+    var: asm_dg_status.stdout_lines
+  tags:
+    - asm_dg

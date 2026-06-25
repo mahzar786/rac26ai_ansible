@@ -1,0 +1,6 @@
+---
+- name: Grid Configuration
+  hosts: rac_primary
+
+  roles:
+    - role: 05_grid_config

@@ -1,0 +1,33 @@
+---
+- name: Set hostname
+  hostname:
+    name: "{{ node_fqdn }}"
+
+- name: Write RAC hosts file
+  copy:
+    dest: /etc/hosts
+    content: |
+      127.0.0.1 localhost localhost.localdomain
+
+      {{ node1_public_ip }} {{ node1_fqdn }} {{ node1_host }}
+      {{ node2_public_ip }} {{ node2_fqdn }} {{ node2_host }}
+
+      {{ node1_private_ip }} {{ node1_host }}-priv.{{ domain_name }} {{ node1_host }}-priv
+      {{ node2_private_ip }} {{ node2_host }}-priv.{{ domain_name }} {{ node2_host }}-priv
+
+      {{ node1_vip_ip }} {{ node1_vip_fqdn }} {{ node1_vip }}
+      {{ node2_vip_ip }} {{ node2_vip_fqdn }} {{ node2_vip }}
+
+      {{ scan_ip1 }} {{ scan_fqdn }} {{ scan_name }}
+      {{ scan_ip2 }} {{ scan_fqdn }} {{ scan_name }}
+      {{ scan_ip3 }} {{ scan_fqdn }} {{ scan_name }}
+
+- name: Validate public node pings
+  command: "ping -c 2 {{ hostvars[item].public_ip }}"
+  loop: "{{ groups['rac_nodes'] }}"
+  changed_when: false
+
+- name: Validate private node pings
+  command: "ping -c 2 {{ hostvars[item].private_ip }}"
+  loop: "{{ groups['rac_nodes'] }}"
+  changed_when: false

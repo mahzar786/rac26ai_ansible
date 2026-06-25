@@ -1,0 +1,24 @@
+---
+- name: Execute Grid Config Tools
+  become: yes
+  become_user: grid
+
+  shell: |
+    cd {{ grid_home }}
+    ./gridSetup.sh \
+      -executeConfigTools \
+      -responseFile {{ stage_dir }}/gridsetup.rsp \
+      -silent
+
+  register: cfgtools
+
+  failed_when: cfgtools.rc not in [0,6]
+
+  tags:
+    - grid_cfg
+
+- debug:
+    var: cfgtools.stdout_lines
+
+  tags:
+    - grid_cfg

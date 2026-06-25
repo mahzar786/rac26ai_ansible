@@ -1,0 +1,17 @@
+- become_user: grid
+  shell: "{{ grid_home }}/bin/crsctl stat res -t"
+  register: crs
+  changed_when: false
+  failed_when: false
+
+- debug:
+    var: crs.stdout_lines
+
+- become_user: oracle
+  shell: "{{ db_home }}/bin/srvctl status database -d {{ db_name }}"
+  register: dbstat
+  changed_when: false
+  failed_when: false
+
+- debug:
+    var: dbstat.stdout_lines

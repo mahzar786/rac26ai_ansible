@@ -1,0 +1,21 @@
+- blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE ORACLE 26AI RAC LAB"
+    block: |
+      192.168.56.80 rac1.lab.mzr rac1
+      192.168.56.81 rac2.lab.mzr rac2
+      192.168.56.82 rac1-vip.lab.mzr rac1-vip
+      192.168.56.83 rac2-vip.lab.mzr rac2-vip
+      192.168.56.84 rac-scan.lab.mzr rac-scan
+      192.168.56.85 rac-scan.lab.mzr rac-scan
+      192.168.56.86 rac-scan.lab.mzr rac-scan
+      192.168.57.80 rac1-priv.lab.mzr rac1-priv
+      192.168.57.81 rac2-priv.lab.mzr rac2-priv
+
+- command: "ping -c 2 {{ hostvars[item].public_ip }}"
+  loop: "{{ groups['rac_nodes'] }}"
+  changed_when: false
+
+- command: "ping -c 2 {{ hostvars[item].private_ip }}"
+  loop: "{{ groups['rac_nodes'] }}"
+  changed_when: false

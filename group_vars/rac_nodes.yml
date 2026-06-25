@@ -1,0 +1,46 @@
+---
+cluster_name: zoom-cluster
+domain_name: lab.maz
+
+scan_name: zoom-scan
+scan_ips:
+  - 192.168.56.74
+  - 192.168.56.75
+  - 192.168.56.76
+
+rac_nodes:
+  - name: zoom1
+    fqdn: zoom1.lab.maz
+    public_ip: 192.168.56.70
+    private_ip: 192.168.57.70
+    vip_name: zoom1-vip
+    vip_ip: 192.168.56.72
+  - name: zoom2
+    fqdn: zoom2.lab.maz
+    public_ip: 192.168.56.71
+    private_ip: 192.168.57.71
+    vip_name: zoom2-vip
+    vip_ip: 192.168.56.73
+
+public_interface: enp0s3
+private_interface: enp0s8
+
+grid_base: /u01/app/grid
+grid_home: /u01/app/26ai/grid
+oracle_base: /u01/app/oracle
+db_home: /u01/app/oracle/product/26ai/dbhome_1
+ora_inventory: /u01/app/oraInventory
+stage_dir: /stage
+
+grid_zip: LINUX.X64_2326100_grid_home.zip
+db_zip: LINUX.X64_2326100_db_home.zip
+
+asm_discovery_string: /dev/disk/by-id/ata-VBOX_HARDDISK_*
+asm_disks:
+  ocr: /dev/disk/by-id/ata-VBOX_HARDDISK_VB53696b04-02299818
+  data: /dev/disk/by-id/ata-VBOX_HARDDISK_VBc638bb07-b5cd2cd8
+  fra: /dev/disk/by-id/ata-VBOX_HARDDISK_VB26c4115d-f19154d9
+
+db_name: TESTCDB
+pdb_name: TESTPDB
+db_memory_mb: 2048

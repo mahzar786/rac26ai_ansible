@@ -1,0 +1,5 @@
+- name: 03_grid_install
+  hosts: rac_nodes
+  become: true
+  roles:
+    - 03_grid_install

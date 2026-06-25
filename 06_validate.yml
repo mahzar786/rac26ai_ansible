@@ -1,0 +1,5 @@
+- name: 05_validation
+  hosts: rac_nodes
+  become: true
+  roles:
+    - 05_validation

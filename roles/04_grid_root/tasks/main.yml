@@ -1,0 +1,35 @@
+---
+- name: Check oraInventory root script
+  stat:
+    path: "{{ ora_inventory }}/orainstRoot.sh"
+  register: orainst
+
+- name: Run oraInventory root script
+  shell: "{{ ora_inventory }}/orainstRoot.sh"
+  when: orainst.stat.exists
+  tags:
+    - grid_root
+
+- name: Check Grid root.sh
+  stat:
+    path: "{{ grid_home }}/root.sh"
+  register: gridroot
+
+- name: Run Grid root.sh
+  shell: "{{ grid_home }}/root.sh"
+  when: gridroot.stat.exists
+  tags:
+    - grid_root
+
+- name: Verify OHASD
+  shell: "{{ grid_home }}/bin/crsctl check has"
+  register: hascheck
+  changed_when: false
+  failed_when: false
+  tags:
+    - grid_root
+
+- debug:
+    var: hascheck.stdout_lines
+  tags:
+    - grid_root

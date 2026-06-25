@@ -1,0 +1,33 @@
+# Oracle 26ai 2-Node RAC on VirtualBox using Ansible
+
+Environment:
+- Node 1: rac1.lab.mzr / 192.168.56.80
+- Node 2: rac2.lab.mzr / 192.168.56.81
+- OS: Red Hat Enterprise Linux 9.5 or Oracle Linux Server 9.5
+- Grid home: /u01/app/26ai/grid
+- DB home: /u01/app/oracle/product/26ai/dbhome_1
+- ASM: +OCR, +DATA, +FRA
+
+Run:
+```bash
+ansible-playbook -i inventory/hosts.ini site.yml --check
+ansible-playbook -i inventory/hosts.ini site.yml
+```
+
+Step-by-step:
+```bash
+ansible-playbook -i inventory/hosts.ini 00_common.yml
+ansible-playbook -i inventory/hosts.ini 01_network.yml
+ansible-playbook -i inventory/hosts.ini 02_asm_disks.yml
+ansible-playbook -i inventory/hosts.ini 03_grid_install.yml
+ansible-playbook -i inventory/hosts.ini 04_db_install.yml
+ansible-playbook -i inventory/hosts.ini 05_dbca.yml
+ansible-playbook -i inventory/hosts.ini 06_validate.yml
+```
+
+Update before running:
+- `group_vars/rac_nodes.yml`
+- ASM disk names
+- Oracle 26ai Grid/DB ZIP file names
+- passwords
+- NIC names
