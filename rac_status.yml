@@ -1,0 +1,45 @@
+---
+- name: Oracle RAC Health Check
+  hosts: rac_nodes
+  gather_facts: yes
+  become: yes
+
+  tasks:
+
+    - name: Verify Ansible connectivity
+      ansible.builtin.ping:
+
+    - name: Host information
+      debug:
+        msg:
+          - "Hostname : {{ ansible_hostname }}"
+          - "OS       : {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel   : {{ ansible_kernel }}"
+          - "Memory   : {{ ansible_memtotal_mb }} MB"
+
+    - name: Check Clusterware
+      shell: crsctl check cluster -all
+      register: cluster
+      changed_when: false
+      ignore_errors: yes
+
+    - debug:
+        var: cluster.stdout_lines
+
+    - name: Cluster Resource Status
+      shell: crsctl stat res -t
+      register: resources
+      changed_when: false
+      ignore_errors: yes
+
+    - debug:
+        var: resources.stdout_lines
+
+    - name: OCR Check
+      shell: ocrcheck
+      register: ocr
+      changed_when: false
+      ignore_errors: yes
+
+    - debug:
+        var: ocr.stdout_lines
