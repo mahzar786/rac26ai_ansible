@@ -1,6 +1,6 @@
 ---
 - name: Oracle RAC Health Check
-  hosts: rac_nodes
+  hosts:  all
   gather_facts: yes
   become: yes
 
